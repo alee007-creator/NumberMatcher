@@ -1,0 +1,28 @@
+name: Build APK
+
+# Runs on every push, and can be started manually from the Actions tab.
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build-android:
+    name: Build for Android
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build APK with Buildozer
+        uses: ArtemSBulgakov/buildozer-action@v1
+        id: buildozer
+        with:
+          command: buildozer android debug
+          buildozer_version: stable
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: bond-matcher-apk
+          path: ${{ steps.buildozer.outputs.filename }}
+          retention-days: 14
